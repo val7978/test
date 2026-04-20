@@ -35,8 +35,14 @@ $xml | Out-File -FilePath "$path\Groups.xml" -Encoding UTF8
 ### 2.3. Выдача прав пользователю user на чтение SYSVOL
 icacls "\\lab.local\SYSVOL" /grant "LAB\user:(RX)" /T
 
+### 2.4. Отключение брандмауэра на DC
+Нужно отключить брандмауэр для лабораторного теста
+netsh advfirewall set allprofiles state off
+
 ## 3. Файлы эксплойта и callback-сервера
-На атакующей машине (10.10.10.30) нужно созать (или перенести) три файла: exploit.py, collback_server.py и Dockerfile
+На атакующей машине (10.10.10.30) нужно создать (или перенести) три файла: exploit.py, collback_server.py и Dockerfile
+Также желательно сразу проверить доступность файла Groups.xml 
+smbclient //10.10.10.10/SYSVOL -U 'lab.local\user%Val-9162988' -c 'ls lab.local/Policies/*/Machine/Preferences/Groups/Groups.xml'
 
 ## 4. Сборка Docker-образа
 На атакующей машине, в папке с файлами собираем Docker-Образ
